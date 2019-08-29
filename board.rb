@@ -1,3 +1,11 @@
+require_relative 'piece'
+require_relative 'bishop'
+require_relative 'pawn'
+require_relative 'queen'
+require_relative 'king'
+require_relative 'knight'
+require_relative 'rook'
+
 class Board
 
 
@@ -17,52 +25,52 @@ class Board
   end
 
   def assign_whites
-    @w_pawn = "\u2659 "
-    @w_king = "\u2654 "
-    @w_queen = "\u2655 "
-    @w_rook = "\u2656 "
-    @w_bishop = "\u2657 "
-    @w_knight = "\u2658 "
+    @w_pawn = Array.new(8, Pawn.new('white'))
+    @w_king = King.new('white')
+    @w_queen = Queen.new("white")
+    @w_rook = Rook.new("white")
+    @w_bishop = Bishop.new("white")
+    @w_knight = Knight.new("white")
 
   end
 
   def assing_blacks
-    @b_pawn = "\u265F "
-    @b_king = "\u265A "
-    @b_queen = "\u265B "
-    @b_rook = "\u265C "
-    @b_bishop = "\u265D "
-    @b_knight = "\u265E "
+    @b_pawn = Array.new(8,Pawn.new('black'))
+    @b_king = King.new('black')
+    @b_queen = Queen.new('b')
+    @b_rook = Rook.new('b')
+    @b_bishop = Bishop.new('b')
+    @b_knight = Knight.new('b')
   end
 
   def place_pieces
     i = 1
     while i<9 #places b&w pawns
-      @board[2][i] = @w_pawn
-      @board[7][i] = @b_pawn
+      @board[2][i] = @b_pawn[i-1].piece
+      @board[7][i] = @w_pawn[i-1].piece
       i += 1
     end
+    
+    @board[1][5] = @b_king.piece #places kings
+    @board[8][5] = @w_king.piece#
 
-    @board[1][5] = @w_king #places kings
-    @board[8][5] = @b_king #
+    @board[1][1] = @b_rook.piece #places rooks
+    @board[1][8] = @b_rook.piece #
+    @board[8][1] = @w_rook.piece #
+    @board[8][8] = @w_rook.piece #
 
-    @board[1][1] = @w_rook #places rooks
-    @board[1][8] = @w_rook #
-    @board[8][1] = @b_rook #
-    @board[8][8] = @b_rook #
+    @board[1][2] = @b_knight.piece #places knights
+    @board[1][7] = @b_knight.piece # 
+    @board[8][2] = @w_knight.piece # 
+    @board[8][7] = @w_knight.piece # 
 
-    @board[1][2] = @w_knight #places knights
-    @board[1][7] = @w_knight # 
-    @board[8][2] = @b_knight # 
-    @board[8][7] = @b_knight # 
+    @board[1][3] = @b_bishop.piece #places bishops
+    @board[1][6] = @b_bishop.piece #
+    @board[8][3] = @w_bishop.piece #
+    @board[8][6] = @w_bishop.piece #
 
-    @board[1][3] = @w_bishop #places bishops
-    @board[1][6] = @w_bishop #
-    @board[8][3] = @b_bishop #
-    @board[8][6] = @b_bishop #
-
-    @board[1][4] = @w_queen#places queens
-    @board[8][4] = @b_queen#
+    @board[1][4] = @b_queen.piece#places queens
+    @board[8][4] = @w_queen.piece#
   end
   
   def assign_empty
