@@ -7,12 +7,11 @@ require_relative 'knight'
 require_relative 'rook'
 
 class Board
-
+  attr_accessor :board
 
   def initialize
     @board = Array.new(9) {Array.new(9)}
     assing_pieces
-    display_board
   end
 
   def assing_pieces
@@ -86,13 +85,38 @@ class Board
   end
 
   def assing_labels
-    label ='a'
+    label = 1
     for i in 1..8 do
-      @board[0][i] = ' ' + label
+      @board[0][i] = ' ' + label.to_s
       label = label.next
       @board[i][0] = i
     end
 
+  end
+  def move_white(initial_row, initial_column, target_row, target_column)
+    valid = false
+    case @board[initial_row.to_i][initial_column.to_i]
+    when "\u265A "
+      valid = King.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
+    when "\u265B "
+      valid = Queen.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
+    when "\u265C "
+      valid = Rook.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
+    when "\u265D "
+      valid = Bishop.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
+    when "\u265E "
+      valid = Knigth.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
+    when "\u265F "
+      puts "Pawn is moving"
+      valid = Pawn.move([initial_row.to_i, initial_column.to_i], [target_row.to_i, target_column.to_i])
+    end
+    valid
+  end
+
+  def move_piece(initial_row, initial_column, target_row, target_column, turn)
+    @board[target_row.to_i][target_column.to_i] = @board[initial_row.to_i][initial_column.to_i]
+    @board[initial_row.to_i][initial_column.to_i] = "\u25A1 "
+    display_board
   end
 
   def display_board
