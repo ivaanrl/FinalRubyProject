@@ -93,24 +93,59 @@ class Board
     end
 
   end
-  def move_white(initial_row, initial_column, target_row, target_column)
+  def move_white(initial_row, initial_column, target_row, target_column, turn)
     valid = false
+    taken = square_taken?(target_row, target_column)
     case @board[initial_row.to_i][initial_column.to_i]
     when "\u265A "
-      valid = King.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
+      valid = King.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     when "\u265B "
-      valid = Queen.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
+      valid = Queen.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     when "\u265C "
-      valid = Rook.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
+      valid = Rook.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     when "\u265D "
-      valid = Bishop.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
+      valid = Bishop.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     when "\u265E "
-      valid = Knigth.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
+      valid = Knight.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     when "\u265F "
-      puts "Pawn is moving"
-      valid = Pawn.move([initial_row.to_i, initial_column.to_i], [target_row.to_i, target_column.to_i])
+      valid = Pawn.move([initial_row.to_i, initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     end
     valid
+  end
+
+  def move_black(initial_row, initial_column, target_row, target_column, turn)
+    valid = false
+    taken = square_taken?(target_row, target_column)
+    case @board[initial_row.to_i][initial_column.to_i]
+    when "\u2654 "
+      valid = King.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+    when "\u2655 "
+      valid = Queen.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+    when "\u2656 "
+      valid = Rook.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+    when "\u2657 "
+      valid = Bishop.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+    when "\u2658 "
+      valid = Knight.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+    when "\u2659 "
+      valid = Pawn.move([initial_row.to_i, initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+    end
+    valid
+  end
+
+  def square_taken?(target_row, target_column)
+    square = []
+    square.push(@board[target_row.to_i][target_column.to_i] == "\u25A1 " ? false : true)
+    square.push(is_white?(@board[target_row.to_i][target_column.to_i]))
+  end
+
+  def is_white?(board_square)
+    case board_square
+    when "\u265A ", "\u265B ", "\u265C ", "\u265D ", "\u265E ", "\u265F "
+      return 'white'
+    else 
+      return 'black'
+    end
   end
 
   def move_piece(initial_row, initial_column, target_row, target_column, turn)

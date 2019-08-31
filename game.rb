@@ -18,7 +18,9 @@ class Game
   def start_game
     puts "White starts. this is the board now: "
     @board.display_board
-    play
+    while !game_over
+      play
+    end
   end
 
   def play
@@ -40,19 +42,17 @@ class Game
     if initial_row.to_i.between?(1,8) && initial_column.to_i.between?(1,8) && target_row.to_i.between?(1,8) && target_column.to_i.between?(1,8)
       if turn == 'white'
         puts "wh"
-        valid = @board.move_white(initial_row, initial_column, target_row, target_column)
+        valid = @board.move_white(initial_row, initial_column, target_row, target_column, turn)
         if valid
           return true
         else
-          puts "There isn't a white piece there. Choose your coordinates again"
           play
         end
       else
-        valid = @board.move_black(initial_row, initial_column, target_row, target_column)
+        valid = @board.move_black(initial_row, initial_column, target_row, target_column, turn)
         if valid
           return true
         else
-          puts "There isn't a black piece there. Choose your coordinates again"
           play
         end
       end
@@ -60,6 +60,10 @@ class Game
       puts "Those aren't valid coordinates. Please choose them again."
       play
     end
+  end
+
+  def game_over
+    return false
   end
 end
 
