@@ -100,11 +100,19 @@ class Board
     when "\u265A "
       valid = King.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     when "\u265B "
-      valid = Queen.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+      if path_empty_col([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i]) ||
+        path_empty_row([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i]) ||
+        path_empty_diagonal?([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
+           valid = Queen.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+      end
     when "\u265C "
-      valid = Rook.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+      if path_empty_col([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i]) || 
+        path_empty_row([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
+       valid = Rook.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+      else
+       puts "That's not a horizontal or vertical move. Please enter a new set of coordinates"
+      end
     when "\u265D "
-      puts "######################"
       if path_empty_diagonal?([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
         valid = Bishop.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
       end
@@ -123,13 +131,23 @@ class Board
     when "\u2654 "
       valid = King.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     when "\u2655 "
-      valid = Queen.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+      if path_empty_col([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i]) ||
+         path_empty_row([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i]) ||
+         path_empty_diagonal?([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
+            valid = Queen.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+      end
     when "\u2656 "
-      valid = Rook.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+      if path_empty_col([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i]) || 
+         path_empty_row([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
+        valid = Rook.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+      else
+        puts "That's not a horizontal or vertical move. Please enter a new set of coordinates"
+      end
     when "\u2657 "
-      puts "######################"
       if path_empty_diagonal?([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
         valid = Bishop.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+      else
+        puts "that's not a diagonal move."
       end
     when "\u2658 "
       valid = Knight.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
@@ -175,10 +193,59 @@ class Board
         i += 1
       end
     else
-      puts "that's not a diagonal move."
       return false
     end
     true
+  end
+
+  def path_empty_col(initial_square, target_square)
+    i = 1
+    moves = initial_square[0] < target_square[0] ? target_square[0] - initial_square[0] : initial_square[0] - target_square[0]
+    if initial_square[0] + moves == target_square[0] && initial_square[1] == target_square[1]
+      while i < moves 
+        if @board[initial_square[0] + i][initial_square[1]] != @empty
+          puts "There's a piece in the way. Please enter a new set of coordinates."
+          return false
+        end
+        i += 1
+      end
+    elsif initial_square[0] - moves == target_square[0] && initial_square[1] == target_square[1]
+      while i < moves
+        if @board[initial_square[0] - i][initial_square[1]] !=@empty
+          puts "There's a piece in the way. Please enter a new set of coordinates."
+          return false
+        end
+        i += 1
+      end
+    else
+      return false
+    end
+    true 
+  end
+
+  def path_empty_row(initial_square, target_square)
+    i = 1
+    moves = initial_square[1] < target_square[1] ? target_square[1] - initial_square[1] : initial_square[1] - target_square[1]
+    if initial_square[0] == target_square[0] && initial_square[1] + moves == target_square[1]
+      while i < moves 
+        if @board[initial_square[0]][initial_square[1] + i] != @empty
+          puts "There's a piece in the way. Please enter a new set of coordinates."
+          return false
+        end
+        i += 1
+      end
+    elsif initial_square[0] == target_square[0] && initial_square[1] - moves == target_square[1]
+      while i < moves
+        if @board[initial_square[0]][initial_square[1] - i] !=@empty
+          puts "There's a piece in the way. Please enter a new set of coordinates."
+          return false
+        end
+        i += 1
+      end
+    else
+      return false
+    end
+    true 
   end
 
   def square_taken?(target_row, target_column)
