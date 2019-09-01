@@ -16,7 +16,7 @@ class Knight < Piece
       else  
         puts "That's not a valid move. Knights can only move in L shape."
       end
-    elsif turn == taken[0]
+    elsif turn == taken[1]
       puts "There's another #{turn} piece there. Please choose your coordinates again."
     end
   end

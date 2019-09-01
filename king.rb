@@ -18,7 +18,7 @@ class King < Piece
       else  
         puts "That's not a valid move. King can only move one square away from him."
       end
-    elsif turn == taken[0]
+    elsif turn == taken[1]
       puts "There's another #{turn} piece there. Please choose your coordinates again."
     end
   end
