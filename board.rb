@@ -124,13 +124,33 @@ class Board
     when "\u2656 "
       valid = Rook.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     when "\u2657 "
-      valid = Bishop.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+      if path_empty_diagonal?([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
+        valid = Bishop.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+      end
     when "\u2658 "
       valid = Knight.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     when "\u2659 "
       valid = Pawn.move([initial_row.to_i, initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     end
     valid
+  end
+
+  def path_empty_diagonal?(inital_square, target_square)
+    i = 0
+    moves = initial_square[0] < target_square[0] ? target_square[0] - initial_square[0] : initial_square[0] - target_square[0]
+    if (initial_square[0] + moves == target_square[0] && initial_square[1] + moves == target_square[1]) ||
+    (initial_square[0] - moves == target_square[0] && initial_square[1] - moves == target_square[1])
+      while i < moves
+        if @board[initial_square[0]][initial_square[1]] != "\u25A1 "
+          puts "There's a piece in the way. Please enter a new set of coordinates."
+          return false
+        end
+        i += 1
+      end
+    else
+      puts "that's not a diagonal move."
+    end
+    true
   end
 
   def square_taken?(target_row, target_column)
