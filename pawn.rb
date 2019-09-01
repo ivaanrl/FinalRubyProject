@@ -4,6 +4,7 @@ class Pawn < Piece
   attr_accessor :piece
   def initialize(color)
     color == 'white' ? @piece = "\u2659 " : @piece = "\u265F "
+    @position = []
   end
 
   def self.move(initial_square, target_square, taken, turn)
@@ -20,9 +21,11 @@ class Pawn < Piece
     else
       if (initial_square[0] == 2 && turn == 'white') || (initial_square[0] == 7 && turn == 'black')
         if initial_square[0] + 1 == target_square[0] || initial_square[0] + 2 == target_square[0]
+          @position = target_square
           return true 
         end
       elsif initial_square[0] + 1 == target_square[0]
+          @position = target_square
           return true
       else 
         puts "That's not a valid Pawn move. Choose your coordinates again."

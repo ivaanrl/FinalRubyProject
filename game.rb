@@ -35,7 +35,11 @@ class Game
     target_column = gets.chomp
     if valid_move?(initial_row, initial_column, target_row, target_column, @turn)
       @board.move_piece(initial_row, initial_column, target_row, target_column, @turn)
+    else 
+      puts "how many times do you go here?!"
+      @board.chosen_error
     end
+    @board.check?(@turn)
   end
 
   def valid_move?(initial_row, initial_column, target_row, target_column, turn)

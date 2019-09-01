@@ -7,10 +7,11 @@ require_relative 'knight'
 require_relative 'rook'
 
 class Board
-  attr_accessor :board
+  attr_accessor :board, :chosen_error
 
   def initialize
     @board = Array.new(9) {Array.new(9)}
+    @chosen = ''
     assing_pieces
   end
 
@@ -27,19 +28,24 @@ class Board
     @w_pawn = Array.new(8, Pawn.new('white'))
     @w_king = King.new('white')
     @w_queen = Queen.new("white")
-    @w_rook = Rook.new("white")
-    @w_bishop = Bishop.new("white")
-    @w_knight = Knight.new("white")
-
+    @w_rook1 = Rook.new("white")
+    @w_rook2 = Rook.new('white')
+    @w_bishop1 = Bishop.new("white")
+    @w_bishop2 = Bishop.new("white")
+    @w_knight1 = Knight.new("white")
+    @w_knight2 = Knight.new("white")
   end
 
   def assing_blacks
     @b_pawn = Array.new(8,Pawn.new('black'))
     @b_king = King.new('black')
     @b_queen = Queen.new('b')
-    @b_rook = Rook.new('b')
-    @b_bishop = Bishop.new('b')
-    @b_knight = Knight.new('b')
+    @b_rook1 = Rook.new('b')
+    @b_rook2 = Rook.new('b')
+    @b_bishop1 = Bishop.new('b')
+    @b_bishop2 = Bishop.new('b')
+    @b_knight1 = Knight.new('b')
+    @b_knight2 = Knight.new('b')
   end
 
   def place_pieces
@@ -53,20 +59,20 @@ class Board
     @board[1][5] = @b_king.piece #places kings
     @board[8][5] = @w_king.piece#
 
-    @board[1][1] = @b_rook.piece #places rooks
-    @board[1][8] = @b_rook.piece #
-    @board[8][1] = @w_rook.piece #
-    @board[8][8] = @w_rook.piece #
+    @board[1][1] = @b_rook1.piece #places rooks
+    @board[1][8] = @b_rook2.piece #
+    @board[8][1] = @w_rook1.piece #
+    @board[8][8] = @w_rook2.piece #
 
-    @board[1][2] = @b_knight.piece #places knights
-    @board[1][7] = @b_knight.piece # 
-    @board[8][2] = @w_knight.piece # 
-    @board[8][7] = @w_knight.piece # 
+    @board[1][2] = @b_knight1.piece #places knights
+    @board[1][7] = @b_knight2.piece # 
+    @board[8][2] = @w_knight1.piece # 
+    @board[8][7] = @w_knight2.piece # 
 
-    @board[1][3] = @b_bishop.piece #places bishops
-    @board[1][6] = @b_bishop.piece #
-    @board[8][3] = @w_bishop.piece #
-    @board[8][6] = @w_bishop.piece #
+    @board[1][3] = @b_bishop1.piece #places bishops
+    @board[1][6] = @b_bishop2.piece #
+    @board[8][3] = @w_bishop1.piece #
+    @board[8][6] = @w_bishop2.piece #
 
     @board[1][4] = @b_queen.piece#places queens
     @board[8][4] = @w_queen.piece#
@@ -91,66 +97,90 @@ class Board
       label = label.next
       @board[i][0] = i
     end
-
   end
+
   def move_white(initial_row, initial_column, target_row, target_column, turn)
     valid = false
     taken = square_taken?(target_row, target_column)
     case @board[initial_row.to_i][initial_column.to_i]
     when "\u265A "
-      valid = King.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+      @chosen_error = King.error
+      valid = @w_king.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     when "\u265B "
       if path_empty_col([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i]) ||
         path_empty_row([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i]) ||
         path_empty_diagonal?([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
-           valid = Queen.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+           valid = @w_queen.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
       end
     when "\u265C "
+      @chosen_error = Rook.error
       if path_empty_col([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i]) || 
         path_empty_row([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
-       valid = Rook.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
-      else
-       puts "That's not a horizontal or vertical move. Please enter a new set of coordinates"
+       valid = @w_rook1.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn) ||
+               @w_rook2.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
       end
     when "\u265D "
+      @chosen_error = Bishop.error
       if path_empty_diagonal?([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
-        valid = Bishop.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+        valid = @w_bishop1.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn) ||
+                @w_bishop2.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
       end
     when "\u265E "
-      valid = Knight.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+      @chosen_error = Knight.error
+      valid = @w_knight1.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn) || 
+              @w_knight2.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     when "\u265F "
       valid = Pawn.move([initial_row.to_i, initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     end
     valid
   end
 
+  def check?(turn)
+    which_king = turn == 'white' ? 'black' : 'white'
+    if which_king == 'black'
+     if move_white(@w_queen.position[0], @w_queen.position[1], @b_king.position[0], @b_king.position[1], turn) || 
+        move_white(@w_rook1.position[0], @w_rook1.position[1], @b_king.position[0], @b_king.position[1], turn) ||
+        move_white(@w_rook2.position[0], @w_rook2.position[1], @b_king.position[0], @b_king.position[1], turn) ||
+        move_white(@w_bishop1.position[0], @w_bishop1.position[1], @b_king.position[0], @b_king.position[1], turn) ||
+        move_white(@w_bishop2.position[0], @w_bishop2.position[1], @b_king.position[0], @b_king.position[1], turn) ||
+        move_white(@w_knight1.position[0], @w_knight1.position[1], @b_king.position[0], @b_king.position[1], turn) ||
+        move_white(@w_knight2.position[0], @w_knight2.position[1], @b_king.position[0], @b_king.position[1], turn)
+          puts "Black king is in chess."
+      end
+    end
+  end
+
+
   def move_black(initial_row, initial_column, target_row, target_column, turn)
     valid = false
     taken = square_taken?(target_row, target_column)
     case @board[initial_row.to_i][initial_column.to_i]
     when "\u2654 "
-      valid = King.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+      @chosen_error = King.error
+      valid = @b_king.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     when "\u2655 "
       if path_empty_col([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i]) ||
          path_empty_row([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i]) ||
          path_empty_diagonal?([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
-            valid = Queen.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+            valid = @b_queen.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
       end
     when "\u2656 "
+      @chosen_error = Rook.error
       if path_empty_col([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i]) || 
          path_empty_row([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
-        valid = Rook.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
-      else
-        puts "That's not a horizontal or vertical move. Please enter a new set of coordinates"
+          valid = @b_rook1.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn) ||
+                  @b_rook2.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
       end
     when "\u2657 "
+      @chosen_error = Bishop.error
       if path_empty_diagonal?([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i])
-        valid = Bishop.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
-      else
-        puts "that's not a diagonal move."
+        valid = @b_bishop1.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn) ||
+                @b_bishop2.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
       end
     when "\u2658 "
-      valid = Knight.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
+      @chosen_error = Knight.error
+      valid = @b_knight1.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn) ||
+              @b_knight2.move([initial_row.to_i,initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     when "\u2659 "
       valid = Pawn.move([initial_row.to_i, initial_column.to_i], [target_row.to_i, target_column.to_i], taken, turn)
     end
