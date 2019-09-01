@@ -41,7 +41,6 @@ class Game
   def valid_move?(initial_row, initial_column, target_row, target_column, turn)
     if initial_row.to_i.between?(1,8) && initial_column.to_i.between?(1,8) && target_row.to_i.between?(1,8) && target_column.to_i.between?(1,8)
       if turn == 'white'
-        puts "wh"
         valid = @board.move_white(initial_row, initial_column, target_row, target_column, turn)
         if valid
           return true
