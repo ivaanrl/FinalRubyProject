@@ -25,4 +25,5 @@ class King < Piece
       puts "There's another #{turn} piece there. Please choose your coordinates again."
     end
   end
+
 end

@@ -2,8 +2,8 @@ require_relative 'board'
 
 class Game
   def initialize
-    @board = Board.new
     @turn = 'white'
+    @board = Board.new
     welcome_message
     start_game
   end
@@ -35,11 +35,10 @@ class Game
     target_column = gets.chomp
     if valid_move?(initial_row, initial_column, target_row, target_column, @turn)
       @board.move_piece(initial_row, initial_column, target_row, target_column, @turn)
+      @turn == 'white' ? @turn = 'black' : @turn = 'white'
     else 
-      puts "how many times do you go here?!"
       @board.chosen_error
     end
-    @board.check?(@turn)
   end
 
   def valid_move?(initial_row, initial_column, target_row, target_column, turn)
@@ -66,7 +65,35 @@ class Game
   end
 
   def game_over
+    if @turn == 'white'
+      possible_moves = @board.king_possible_moves(@turn)
+     if possible_moves.all? { |position| @board.check_whites?(position[0], position[1], @turn)}
+       puts "###################"
+       puts "CHECK MATE. WHITE WINS."
+       puts "###################"
+       return true
+     end
+      if possible_moves.any? { |position| @board.check_whites?(position[0], position[1], @turn)}
+        puts "###############"
+        puts "Black king is in check."
+        puts "############"
+      end
+    else
+      possible_moves = @board.king_possible_moves(@turn)
+      if possible_moves.all? {|position| @board.check_blacks?(position[0], position[1], @turn)}
+        puts "###################"
+        puts "CHECK MATE. BLACK WINS."
+        puts "###################"
+        return true
+      end
+      if possible_moves.any? { |position| @board.check_blacks?(position[0], position[1], @turn)}
+        puts "###############"
+        puts "White king is in check."
+        puts "############"
+      end
+    end
     return false
+
   end
 end
 
